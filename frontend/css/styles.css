@@ -28,6 +28,14 @@ article:hover {
   transform: translateY(-4px);
 }
 
+/* Logo en el footer (JPEG con fondo negro sobre azul oscuro):
+   mix-blend-mode: screen elimina visualmente el fondo negro
+   dejando solo el simbolo blanco visible. */
+.logo-blend {
+  mix-blend-mode: screen;
+  border-radius: 0;
+}
+
 /* Scrollbar sutil (WebKit) */
 ::-webkit-scrollbar {
   width: 10px;
