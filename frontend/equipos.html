@@ -33,7 +33,7 @@
           Trabajamos con distribuidores autorizados para ofrecerte equipos originales, garantia escrita y facturacion electronica.
         </p>
         <div class="mt-8 flex flex-wrap gap-4">
-          <a href="#catalogo" class="inline-block bg-athenec-magenta hover:bg-pink-600 transition text-white font-semibold px-6 py-3 rounded-full shadow">Ver categorias</a>
+          <a href="#solicitar" class="inline-block bg-athenec-magenta hover:bg-pink-600 transition text-white font-semibold px-6 py-3 rounded-full shadow">Ver categorias</a>
           <a href="mailto:ventas@athenec.com?subject=Consulta%20de%20equipos" class="inline-block bg-white/10 hover:bg-white/20 border border-white/30 transition text-white font-semibold px-6 py-3 rounded-full">Solicitar catalogo</a>
         </div>
       </div>
@@ -138,7 +138,102 @@
     </div>
   </section>
 
+
+  <!-- FORM EQUIPOS (conectado al backend) -->
+  <section id="solicitar" class="bg-white scroll-mt-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div class="text-center">
+        <span class="uppercase text-xs tracking-widest text-athenec-magenta font-semibold">Solicita tu cotizacion</span>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-athenec-blue">Que equipo necesitas?</h2>
+        <p class="mt-4 text-gray-600 text-lg">Cuentanos el uso y presupuesto. Te enviamos opciones a tu correo.</p>
+      </div>
+      <form id="equipoForm" class="mt-10 bg-athenec-graylite rounded-2xl p-8 space-y-5" novalidate>
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label for="e_nombre" class="block text-sm font-semibold text-gray-700 mb-1">Nombre completo</label>
+            <input type="text" id="e_nombre" name="nombre_cliente" required minlength="2" maxlength="120" placeholder="Ej. Maria Perez" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-athenec-blue focus:ring-2 focus:ring-athenec-blue/20 outline-none transition bg-white" />
+          </div>
+          <div>
+            <label for="e_correo" class="block text-sm font-semibold text-gray-700 mb-1">Correo electronico</label>
+            <input type="email" id="e_correo" name="correo" required placeholder="tucorreo@ejemplo.com" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-athenec-blue focus:ring-2 focus:ring-athenec-blue/20 outline-none transition bg-white" />
+          </div>
+          <div>
+            <label for="e_categoria" class="block text-sm font-semibold text-gray-700 mb-1">Categoria</label>
+            <select id="e_categoria" name="categoria" required class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-athenec-blue focus:ring-2 focus:ring-athenec-blue/20 outline-none transition bg-white">
+              <option value="" disabled selected>Selecciona...</option>
+              <option value="laptop">Laptop</option>
+              <option value="pc">PC de escritorio</option>
+              <option value="periferico">Periferico</option>
+              <option value="componente">Componente</option>
+            </select>
+          </div>
+          <div>
+            <label for="e_presupuesto" class="block text-sm font-semibold text-gray-700 mb-1">Presupuesto (opcional)</label>
+            <select id="e_presupuesto" name="presupuesto" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-athenec-blue focus:ring-2 focus:ring-athenec-blue/20 outline-none transition bg-white">
+              <option value="">Sin definir</option>
+              <option value="0-1500">S/ 0 - 1,500</option>
+              <option value="1500-3000">S/ 1,500 - 3,000</option>
+              <option value="3000-6000">S/ 3,000 - 6,000</option>
+              <option value="6000+">S/ 6,000 a mas</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label for="e_detalle" class="block text-sm font-semibold text-gray-700 mb-1">Detalle</label>
+          <textarea id="e_detalle" name="detalle" required minlength="10" maxlength="2000" rows="4" placeholder="Uso previsto (gaming, diseno, oficina), preferencias de marca, urgencia..." class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-athenec-blue focus:ring-2 focus:ring-athenec-blue/20 outline-none transition bg-white resize-none"></textarea>
+        </div>
+        <button type="submit" id="equipoSubmit" class="w-full bg-athenec-magenta hover:bg-pink-600 disabled:opacity-60 disabled:cursor-not-allowed transition text-white font-semibold px-6 py-3 rounded-full shadow">Enviar consulta</button>
+        <div id="equipoFeedback" class="hidden text-sm rounded-lg px-4 py-3"></div>
+      </form>
+    </div>
+  </section>
+
   <div id="footer-slot"></div>
   <script src="js/partials.js"></script>
+  <script>
+    const API_EQP = 'http://localhost:8000/api';
+    const formE = document.getElementById('equipoForm');
+    const btnE = document.getElementById('equipoSubmit');
+    const fbE = document.getElementById('equipoFeedback');
+    function fbEShow(kind, msg) {
+      fbE.className = 'text-sm rounded-lg px-4 py-3 ' + (kind === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200');
+      fbE.textContent = msg;
+      fbE.classList.remove('hidden');
+    }
+    formE?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      fbE.classList.add('hidden');
+      if (!formE.checkValidity()) { formE.reportValidity(); return; }
+      const payload = {
+        nombre_cliente: formE.nombre_cliente.value.trim(),
+        correo: formE.correo.value.trim(),
+        categoria: formE.categoria.value,
+        detalle: formE.detalle.value.trim(),
+      };
+      const p = formE.presupuesto.value;
+      if (p) payload.presupuesto = p;
+      btnE.disabled = true; const orig = btnE.textContent; btnE.textContent = 'Enviando...';
+      try {
+        const res = await fetch(API_EQP + '/equipos/consultar', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
+        });
+        if (res.status === 201) {
+          const data = await res.json();
+          const first = payload.nombre_cliente.split(' ')[0];
+          fbEShow('success', `Listo ${first}! Recibimos tu consulta (ticket ${data.ticket_id}). Te enviaremos opciones a ${payload.correo}.`);
+          formE.reset();
+        } else if (res.status === 422) {
+          const err = await res.json();
+          fbEShow('error', 'Datos invalidos: ' + (err?.detail?.[0]?.msg || 'revisa el formulario.'));
+        } else {
+          fbEShow('error', 'Error del servidor (' + res.status + ').');
+        }
+      } catch (err) {
+        fbEShow('error', 'No se pudo conectar con el backend en http://localhost:8000.');
+      } finally {
+        btnE.disabled = false; btnE.textContent = orig;
+      }
+    });
+  </script>
 </body>
 </html>

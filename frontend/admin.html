@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Admin | Athenec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: { athenec: { blue: '#1E3A8A', bluedark: '#0F1E4C', magenta: '#E5197F', graylite: '#F3F4F6' } },
+        fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+      }}
+    }
+  </script>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body class="font-sans bg-athenec-graylite text-gray-800" data-page="admin">
+  <div id="header-slot"></div>
+
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex items-center justify-between flex-wrap gap-4">
+      <div>
+        <h1 class="text-3xl font-extrabold text-athenec-blue">Panel comercial</h1>
+        <p class="text-gray-600 mt-1">Gestion unificada de solicitudes entrantes.</p>
+      </div>
+      <div class="flex gap-2 items-center">
+        <label for="tabla" class="text-sm font-semibold text-gray-700">Tabla:</label>
+        <select id="tabla" class="rounded-lg border border-gray-300 px-3 py-2 bg-white text-sm">
+          <option value="cotizaciones">Soluciones (COT-)</option>
+          <option value="asesorias">Asesorias (ASE-)</option>
+          <option value="equipos">Equipos (EQP-)</option>
+        </select>
+        <label for="filtroStatus" class="text-sm font-semibold text-gray-700 ml-3">Status:</label>
+        <select id="filtroStatus" class="rounded-lg border border-gray-300 px-3 py-2 bg-white text-sm">
+          <option value="">Todos</option>
+        </select>
+        <button id="btnRefresh" class="bg-athenec-blue hover:bg-athenec-bluedark text-white px-4 py-2 rounded-lg text-sm font-semibold ml-3">
+          Refrescar
+        </button>
+      </div>
+    </div>
+
+    <!-- Metricas -->
+    <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-white rounded-2xl p-5 shadow-sm">
+        <div class="text-xs uppercase tracking-widest text-gray-500">Total</div>
+        <div id="mTotal" class="text-3xl font-extrabold text-athenec-blue mt-1">-</div>
+      </div>
+      <div class="bg-white rounded-2xl p-5 shadow-sm">
+        <div class="text-xs uppercase tracking-widest text-gray-500">Nuevas</div>
+        <div id="mNuevas" class="text-3xl font-extrabold text-athenec-magenta mt-1">-</div>
+      </div>
+      <div class="bg-white rounded-2xl p-5 shadow-sm">
+        <div class="text-xs uppercase tracking-widest text-gray-500">En proceso</div>
+        <div id="mProceso" class="text-3xl font-extrabold text-yellow-600 mt-1">-</div>
+      </div>
+      <div class="bg-white rounded-2xl p-5 shadow-sm">
+        <div class="text-xs uppercase tracking-widest text-gray-500">Ganadas / cerradas</div>
+        <div id="mGanadas" class="text-3xl font-extrabold text-green-600 mt-1">-</div>
+      </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="mt-8 bg-white rounded-2xl shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-athenec-graylite text-athenec-blue uppercase text-xs tracking-wider">
+            <tr>
+              <th class="text-left px-4 py-3">Ticket</th>
+              <th class="text-left px-4 py-3">Cliente</th>
+              <th class="text-left px-4 py-3">Correo</th>
+              <th class="text-left px-4 py-3">Tipo</th>
+              <th class="text-left px-4 py-3">Status</th>
+              <th class="text-left px-4 py-3">Fecha</th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+            <tr><td colspan="6" class="px-4 py-8 text-center text-gray-500">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="feedback" class="hidden mt-4 text-sm rounded-lg px-4 py-3"></div>
+  </section>
+
+  <div id="footer-slot"></div>
+  <script src="js/partials.js"></script>
+  <script>
+    const API = 'http://localhost:8000/api';
+
+    const CONFIG = {
+      cotizaciones: {
+        listUrl: API + '/soluciones/cotizaciones',
+        patchUrl: (t) => API + '/soluciones/cotizaciones/' + t,
+        typeField: 'tipo_proyecto',
+        statuses: ['nueva','contactada','cotizada','ganada','perdida'],
+      },
+      asesorias: {
+        listUrl: API + '/asesoria/solicitudes',
+        patchUrl: (t) => API + '/asesoria/solicitudes/' + t,   // placeholder - PATCH no implementado aun para asesorias
+        typeField: 'nivel',
+        statuses: ['nueva','contactada','en_asesoria','finalizada','perdida'],
+      },
+      equipos: {
+        listUrl: API + '/equipos/consultas',
+        patchUrl: (t) => API + '/equipos/consultas/' + t,      // placeholder - PATCH no implementado aun
+        typeField: 'categoria',
+        statuses: ['nueva','cotizada','facturada','entregada','perdida'],
+      }
+    };
+
+    const STATUS_STYLE = {
+      nueva:        'bg-athenec-magenta text-white',
+      contactada:   'bg-yellow-100 text-yellow-800',
+      cotizada:     'bg-blue-100 text-blue-800',
+      ganada:       'bg-green-100 text-green-800',
+      perdida:      'bg-gray-200 text-gray-600',
+      en_asesoria:  'bg-blue-100 text-blue-800',
+      finalizada:   'bg-green-100 text-green-800',
+      facturada:    'bg-purple-100 text-purple-800',
+      entregada:    'bg-green-100 text-green-800',
+    };
+
+    const el = (id) => document.getElementById(id);
+    const feedback = el('feedback');
+    function showFeedback(kind, msg) {
+      feedback.className = 'mt-4 text-sm rounded-lg px-4 py-3 ' + (
+        kind === 'success' ? 'bg-green-50 text-green-800 border border-green-200'
+        : kind === 'error' ? 'bg-red-50 text-red-800 border border-red-200'
+        : 'bg-blue-50 text-blue-800 border border-blue-200');
+      feedback.textContent = msg;
+      feedback.classList.remove('hidden');
+      setTimeout(() => feedback.classList.add('hidden'), 4000);
+    }
+
+    function llenarFiltroStatus() {
+      const cfg = CONFIG[el('tabla').value];
+      const sel = el('filtroStatus');
+      sel.innerHTML = '<option value="">Todos</option>' +
+        cfg.statuses.map(s => `<option value="${s}">${s}</option>`).join('');
+    }
+
+    async function cargar() {
+      const tabla = el('tabla').value;
+      const cfg = CONFIG[tabla];
+      const status = el('filtroStatus').value;
+      const url = cfg.listUrl + (status ? `?status=${status}` : '');
+      const tbody = el('tbody');
+      tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-gray-500">Cargando...</td></tr>';
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const rows = await res.json();
+        renderTabla(rows, tabla);
+        renderMetricas(rows, tabla);
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-red-600">Error: ${e.message}. Backend en http://localhost:8000?</td></tr>`;
+      }
+    }
+
+    function renderMetricas(rows, tabla) {
+      el('mTotal').textContent = rows.length;
+      el('mNuevas').textContent = rows.filter(r => r.status === 'nueva').length;
+      const proceso = ['contactada','cotizada','en_asesoria','facturada'];
+      el('mProceso').textContent = rows.filter(r => proceso.includes(r.status)).length;
+      const cerradas = ['ganada','finalizada','entregada'];
+      el('mGanadas').textContent = rows.filter(r => cerradas.includes(r.status)).length;
+    }
+
+    function renderTabla(rows, tabla) {
+      const cfg = CONFIG[tabla];
+      const tbody = el('tbody');
+      if (rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-gray-500">Sin registros.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = rows.map(r => `
+        <tr class="border-t border-gray-100 hover:bg-athenec-graylite/50">
+          <td class="px-4 py-3 font-mono text-xs">${r.ticket_id}</td>
+          <td class="px-4 py-3 font-medium">${escapeHtml(r.nombre_cliente)}</td>
+          <td class="px-4 py-3 text-gray-600">${escapeHtml(r.correo)}</td>
+          <td class="px-4 py-3">${escapeHtml(r[cfg.typeField] || '-')}</td>
+          <td class="px-4 py-3">
+            ${tabla === 'cotizaciones' ? `
+              <select data-ticket="${r.ticket_id}" data-current="${r.status}"
+                      class="statusSelect rounded-md text-xs font-semibold px-2 py-1 ${STATUS_STYLE[r.status] || ''}">
+                ${cfg.statuses.map(s => `<option value="${s}" ${s === r.status ? 'selected' : ''}>${s}</option>`).join('')}
+              </select>
+            ` : `
+              <span class="rounded-md text-xs font-semibold px-2 py-1 ${STATUS_STYLE[r.status] || 'bg-gray-100 text-gray-700'}">${r.status}</span>
+            `}
+          </td>
+          <td class="px-4 py-3 text-gray-500 text-xs">${new Date(r.created_at).toLocaleString()}</td>
+        </tr>
+      `).join('');
+
+      // Wire up status change (solo cotizaciones tiene PATCH)
+      if (tabla === 'cotizaciones') {
+        tbody.querySelectorAll('.statusSelect').forEach(sel => {
+          sel.addEventListener('change', async (ev) => {
+            const ticket = ev.target.dataset.ticket;
+            const newStatus = ev.target.value;
+            const previous = ev.target.dataset.current;
+            try {
+              const res = await fetch(CONFIG.cotizaciones.patchUrl(ticket), {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus }),
+              });
+              if (!res.ok) throw new Error('HTTP ' + res.status);
+              showFeedback('success', `${ticket} -> ${newStatus}`);
+              ev.target.dataset.current = newStatus;
+              ev.target.className = 'statusSelect rounded-md text-xs font-semibold px-2 py-1 ' + (STATUS_STYLE[newStatus] || '');
+              renderMetricas(await (await fetch(CONFIG.cotizaciones.listUrl)).json(), 'cotizaciones');
+            } catch (e) {
+              showFeedback('error', 'No se pudo actualizar: ' + e.message);
+              ev.target.value = previous;
+            }
+          });
+        });
+      }
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    el('tabla').addEventListener('change', () => { llenarFiltroStatus(); cargar(); });
+    el('filtroStatus').addEventListener('change', cargar);
+    el('btnRefresh').addEventListener('click', cargar);
+
+    llenarFiltroStatus();
+    cargar();
+  </script>
+</body>
+</html>

@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 
 from database import Base, engine
 import models  # noqa: F401  -> registra los modelos en Base.metadata
-from routers import soluciones
+from routers import soluciones, asesoria, equipos
 
 # ----------------------------------------------------------------------
 # Configuracion
@@ -85,6 +85,8 @@ def health():
 # Registro de routers
 # ----------------------------------------------------------------------
 app.include_router(soluciones.router, prefix=API_PREFIX)
+app.include_router(asesoria.router, prefix=API_PREFIX)
+app.include_router(equipos.router, prefix=API_PREFIX)
 
 
 # ----------------------------------------------------------------------
