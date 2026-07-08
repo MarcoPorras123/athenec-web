@@ -1,18 +1,18 @@
 """
 Athenec - Punto de entrada de la API
 ====================================
-Aplicacion FastAPI con:
-- Configuracion via .env
-- Middleware CORS
-- Inclusion ordenada de routers modulares
+FastAPI + CORS + inclusion de routers + creacion de tablas al iniciar.
 """
 
 import os
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-# Routers
+from database import Base, engine
+import models  # noqa: F401  -> registra los modelos en Base.metadata
 from routers import soluciones
 
 # ----------------------------------------------------------------------
@@ -28,23 +28,32 @@ FRONTEND_ORIGIN = os.getenv(
 )
 ALLOWED_ORIGINS = [o.strip() for o in FRONTEND_ORIGIN.split(",") if o.strip()]
 
+
 # ----------------------------------------------------------------------
-# Instancia FastAPI
+# Ciclo de vida: crear tablas al arrancar
+# ----------------------------------------------------------------------
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Crea las tablas si no existen (idempotente)."""
+    Base.metadata.create_all(bind=engine)
+    yield
+    # Nada que limpiar por ahora.
+
+
+# ----------------------------------------------------------------------
+# App
 # ----------------------------------------------------------------------
 app = FastAPI(
     title="Athenec API",
     description=(
-        "API RESTful de Athenec para las tres lineas de negocio: "
-        "soluciones tecnologicas, asesoria academica y venta de equipos."
+        "API RESTful de Athenec: soluciones tecnologicas, asesoria academica y venta de equipos."
     ),
-    version="0.1.0",
+    version="0.2.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
-# ----------------------------------------------------------------------
-# Middleware CORS
-# ----------------------------------------------------------------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
@@ -53,12 +62,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 # ----------------------------------------------------------------------
 # Endpoints de salud
 # ----------------------------------------------------------------------
 @app.get("/", tags=["health"])
 def root():
-    """Mensaje raiz de bienvenida."""
     return {
         "service": "Athenec API",
         "version": app.version,
@@ -69,24 +78,17 @@ def root():
 
 @app.get("/health", tags=["health"])
 def health():
-    """Chequeo de salud para monitores / load balancers."""
     return {"status": "ok"}
 
 
 # ----------------------------------------------------------------------
-# Registro ordenado de routers
+# Registro de routers
 # ----------------------------------------------------------------------
 app.include_router(soluciones.router, prefix=API_PREFIX)
 
-# Futuros:
-# from routers import asesoria, equipos, auth
-# app.include_router(asesoria.router, prefix=API_PREFIX)
-# app.include_router(equipos.router, prefix=API_PREFIX)
-# app.include_router(auth.router, prefix=API_PREFIX)
-
 
 # ----------------------------------------------------------------------
-# Ejecucion directa (para debug local)
+# Ejecucion directa
 # ----------------------------------------------------------------------
 if __name__ == "__main__":
     import uvicorn
