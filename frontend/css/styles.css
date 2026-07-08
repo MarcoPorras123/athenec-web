@@ -1,0 +1,42 @@
+/* =========================================
+   Athenec - Estilos adicionales
+   Tailwind CDN maneja la mayor parte del diseño;
+   este archivo agrega ajustes finos.
+   ========================================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Focus visible accesible */
+:focus-visible {
+  outline: 2px solid #E5197F;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Efecto sutil en cards de servicios */
+article {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+article:hover {
+  transform: translateY(-4px);
+}
+
+/* Scrollbar sutil (WebKit) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
