@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Athenec - Venta de laptops, PCs, perifericos y componentes con garantia y factura." />
+  <title>Equipos tecnologicos | Athenec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: { athenec: { blue: '#1E3A8A', bluedark: '#0F1E4C', magenta: '#E5197F', graylite: '#F3F4F6' } },
+        fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+      }}
+    }
+  </script>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body class="font-sans bg-white text-gray-800" data-page="equipos">
+
+  <div id="header-slot"></div>
+
+  <!-- HERO -->
+  <section class="bg-gradient-to-br from-athenec-blue to-athenec-bluedark text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+      <div class="max-w-3xl">
+        <span class="uppercase text-xs tracking-widest text-athenec-magenta font-semibold">Equipos tecnologicos</span>
+        <h1 class="mt-4 text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight">Hardware confiable al mejor precio.</h1>
+        <p class="mt-6 text-lg lg:text-xl text-white/85">
+          Trabajamos con distribuidores autorizados para ofrecerte equipos originales, garantia escrita y facturacion electronica.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a href="#catalogo" class="inline-block bg-athenec-magenta hover:bg-pink-600 transition text-white font-semibold px-6 py-3 rounded-full shadow">Ver categorias</a>
+          <a href="mailto:ventas@athenec.com?subject=Consulta%20de%20equipos" class="inline-block bg-white/10 hover:bg-white/20 border border-white/30 transition text-white font-semibold px-6 py-3 rounded-full">Solicitar catalogo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIAS -->
+  <section id="catalogo" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 scroll-mt-20">
+    <div class="text-center max-w-3xl mx-auto">
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-athenec-blue">Nuestras categorias</h2>
+      <p class="mt-4 text-gray-600 text-lg">Equipos para estudiantes, profesionales y empresas.</p>
+    </div>
+    <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="bg-athenec-graylite rounded-2xl p-8 text-center hover:shadow-md transition">
+        <div class="text-5xl">&#128187;</div>
+        <h3 class="mt-4 font-bold text-athenec-blue text-lg">Laptops</h3>
+        <p class="text-sm text-gray-600 mt-2">Dell, HP, Lenovo, ASUS, Apple.</p>
+      </div>
+      <div class="bg-athenec-graylite rounded-2xl p-8 text-center hover:shadow-md transition">
+        <div class="text-5xl">&#128421;</div>
+        <h3 class="mt-4 font-bold text-athenec-blue text-lg">PCs escritorio</h3>
+        <p class="text-sm text-gray-600 mt-2">Armados a medida para gaming, diseno o trabajo.</p>
+      </div>
+      <div class="bg-athenec-graylite rounded-2xl p-8 text-center hover:shadow-md transition">
+        <div class="text-5xl">&#127911;</div>
+        <h3 class="mt-4 font-bold text-athenec-blue text-lg">Perifericos</h3>
+        <p class="text-sm text-gray-600 mt-2">Teclados, mouse, audifonos, camaras.</p>
+      </div>
+      <div class="bg-athenec-graylite rounded-2xl p-8 text-center hover:shadow-md transition">
+        <div class="text-5xl">&#128268;</div>
+        <h3 class="mt-4 font-bold text-athenec-blue text-lg">Componentes</h3>
+        <p class="text-sm text-gray-600 mt-2">RAM, SSD, GPUs, fuentes, refrigeracion.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BENEFICIOS -->
+  <section class="bg-athenec-graylite">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div class="text-center max-w-3xl mx-auto">
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-athenec-blue">Por que comprar con Athenec?</h2>
+      </div>
+      <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-2xl p-6 shadow-sm">
+          <div class="text-3xl">&#9989;</div>
+          <h3 class="mt-3 font-bold text-athenec-blue text-lg">Productos originales</h3>
+          <p class="text-sm text-gray-600 mt-2">Distribuidores autorizados con garantia oficial de fabrica.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm">
+          <div class="text-3xl">&#128179;</div>
+          <h3 class="mt-3 font-bold text-athenec-blue text-lg">Facturacion electronica</h3>
+          <p class="text-sm text-gray-600 mt-2">Emitimos boleta o factura para todas las compras.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm">
+          <div class="text-3xl">&#128666;</div>
+          <h3 class="mt-3 font-bold text-athenec-blue text-lg">Delivery a todo el pais</h3>
+          <p class="text-sm text-gray-600 mt-2">Envios seguros con seguimiento en tiempo real.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESO DE COMPRA -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <div class="text-center max-w-3xl mx-auto">
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-athenec-blue">Como comprar</h2>
+      <p class="mt-4 text-gray-600 text-lg">Un proceso simple y transparente.</p>
+    </div>
+    <div class="mt-12 grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div class="text-center">
+        <div class="mx-auto w-12 h-12 rounded-full bg-athenec-magenta text-white flex items-center justify-center font-bold">1</div>
+        <h3 class="mt-4 font-bold text-athenec-blue">Consultanos</h3>
+        <p class="text-sm text-gray-600 mt-2">Escribenos que equipo necesitas o el uso que le daras.</p>
+      </div>
+      <div class="text-center">
+        <div class="mx-auto w-12 h-12 rounded-full bg-athenec-magenta text-white flex items-center justify-center font-bold">2</div>
+        <h3 class="mt-4 font-bold text-athenec-blue">Cotizamos</h3>
+        <p class="text-sm text-gray-600 mt-2">Te enviamos opciones con precios y comparativa.</p>
+      </div>
+      <div class="text-center">
+        <div class="mx-auto w-12 h-12 rounded-full bg-athenec-magenta text-white flex items-center justify-center font-bold">3</div>
+        <h3 class="mt-4 font-bold text-athenec-blue">Facturamos</h3>
+        <p class="text-sm text-gray-600 mt-2">Confirmas el pedido y emitimos comprobante.</p>
+      </div>
+      <div class="text-center">
+        <div class="mx-auto w-12 h-12 rounded-full bg-athenec-magenta text-white flex items-center justify-center font-bold">4</div>
+        <h3 class="mt-4 font-bold text-athenec-blue">Entregamos</h3>
+        <p class="text-sm text-gray-600 mt-2">Delivery a domicilio o retiro en tienda.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="bg-athenec-graylite">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-athenec-blue">Solicita tu cotizacion</h2>
+      <p class="mt-4 text-gray-600 text-lg max-w-2xl mx-auto">Cuentanos que necesitas y te enviamos opciones con precio, stock y garantia.</p>
+      <a href="mailto:ventas@athenec.com?subject=Consulta%20de%20equipos" class="inline-flex items-center gap-2 mt-8 bg-athenec-magenta hover:bg-pink-600 transition text-white font-semibold px-8 py-4 rounded-full shadow text-lg">
+        Solicitar catalogo y precios
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <div id="footer-slot"></div>
+  <script src="js/partials.js"></script>
+</body>
+</html>

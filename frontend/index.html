@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Athenec — Soluciones tecnológicas, asesoría de tesis y venta de equipos." />
-  <title>Athenec | Soluciones tecnológicas, asesoría y equipos</title>
+  <meta name="description" content="Athenec - Soluciones tecnologicas, asesoria de tesis y venta de equipos." />
+  <title>Athenec | Soluciones tecnologicas, asesoria y equipos</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -12,344 +12,79 @@
       theme: {
         extend: {
           colors: {
-            athenec: {
-              blue: '#1E3A8A',
-              bluedark: '#0F1E4C',
-              magenta: '#E5197F',
-              graylite: '#F3F4F6'
-            }
+            athenec: { blue: '#1E3A8A', bluedark: '#0F1E4C', magenta: '#E5197F', graylite: '#F3F4F6' }
           },
           fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
         }
       }
     }
   </script>
-
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 </head>
-<body class="font-sans bg-white text-gray-800">
+<body class="font-sans bg-white text-gray-800" data-page="home">
 
-  <!-- ================= HEADER ================= -->
-  <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
-        <div class="flex items-center gap-8">
-          <a href="#" class="flex items-center gap-2" aria-label="Athenec - inicio">
-            <img src="assets/logo-athenec.jpeg" alt="Athenec" class="h-10 w-auto rounded-md" />
-          </a>
-          <nav class="hidden lg:flex items-center gap-6 text-athenec-blue font-medium">
-            <a href="#software" class="hover:text-athenec-magenta transition">Software</a>
-            <a href="#asesoria" class="hover:text-athenec-magenta transition">Aprender</a>
-            <a href="#equipos" class="hover:text-athenec-magenta transition">Soporte</a>
-            <a href="#" class="hover:text-athenec-magenta transition">Socios</a>
-            <a href="#" class="hover:text-athenec-magenta transition">Acerca de nosotros</a>
-          </nav>
-        </div>
-        <div class="flex items-center gap-4 text-athenec-blue">
-          <button aria-label="Buscar" class="p-2 rounded-full hover:bg-athenec-graylite transition">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 10.5A6.5 6.5 0 1 1 4 10.5a6.5 6.5 0 0 1 13 0Z"/></svg>
-          </button>
-          <button aria-label="Idioma" class="p-2 rounded-full hover:bg-athenec-graylite transition flex items-center gap-1">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 24" class="w-6 h-4 rounded-sm overflow-hidden"><rect width="36" height="8" fill="#c8102e"/><rect y="8" width="36" height="8" fill="#ffffff"/><rect y="16" width="36" height="8" fill="#c8102e"/></svg>
-            <span class="text-xs font-semibold hidden sm:inline">ES</span>
-          </button>
-          <a href="mailto:contacto@athenec.com" aria-label="Contacto" class="p-2 rounded-full hover:bg-athenec-graylite transition">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/></svg>
-          </a>
-          <button aria-label="Menu de servicios" class="p-2 rounded-full hover:bg-athenec-graylite transition">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><circle cx="5" cy="5" r="1.8"/><circle cx="12" cy="5" r="1.8"/><circle cx="19" cy="5" r="1.8"/><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/><circle cx="5" cy="19" r="1.8"/><circle cx="12" cy="19" r="1.8"/><circle cx="19" cy="19" r="1.8"/></svg>
-          </button>
-          <button id="mobileMenuBtn" aria-label="Menu" class="lg:hidden p-2 rounded-md hover:bg-athenec-graylite">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5"/></svg>
-          </button>
-        </div>
-      </div>
-      <nav id="mobileNav" class="hidden lg:hidden pb-4 flex-col gap-3 text-athenec-blue font-medium">
-        <a href="#software" class="block py-1">Software</a>
-        <a href="#asesoria" class="block py-1">Aprender</a>
-        <a href="#equipos" class="block py-1">Soporte</a>
-      </nav>
-    </div>
-  </header>
+  <div id="header-slot"></div>
 
-  <!-- ================= HERO ================= -->
+  <!-- HERO -->
   <section class="bg-athenec-graylite">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 text-center">
       <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-athenec-blue leading-tight">
-        Tecnología, conocimiento y equipamiento <br class="hidden sm:block"> para llevar tus ideas al siguiente nivel.
+        Tecnologia, conocimiento y equipamiento <br class="hidden sm:block"> para llevar tus ideas al siguiente nivel.
       </h1>
       <p class="mt-6 text-lg text-gray-600 max-w-2xl mx-auto">
-        En Athenec integramos desarrollo de software, asesoría académica y venta de equipos en un solo lugar.
+        En Athenec integramos desarrollo de software, asesoria academica y venta de equipos en un solo lugar.
       </p>
     </div>
   </section>
 
-  <!-- ================= 3 CARDS ================= -->
-  <section id="software" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 scroll-mt-20">
+  <!-- 3 CARDS -> pages -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
       <article class="bg-athenec-blue text-white rounded-2xl p-8 flex flex-col justify-between shadow-lg min-h-[380px]">
         <div>
-          <span class="uppercase text-xs tracking-widest text-white/70">Soluciones tecnológicas</span>
+          <span class="uppercase text-xs tracking-widest text-white/70">Soluciones tecnologicas</span>
           <h2 class="mt-3 text-2xl font-bold leading-snug">Software a medida para tu negocio</h2>
-          <p class="mt-4 text-white/90">Desarrollamos aplicaciones web, móviles, automatizaciones e integraciones que se ajustan a tus procesos.</p>
+          <p class="mt-4 text-white/90">Desarrollamos aplicaciones web, moviles, automatizaciones e integraciones que se ajustan a tus procesos.</p>
         </div>
         <div class="mt-8">
-          <a href="#cotizar" class="inline-block bg-athenec-magenta hover:bg-pink-600 transition text-white font-semibold px-6 py-3 rounded-full shadow">Cotizar gratis</a>
+          <a href="software.html" class="inline-block bg-athenec-magenta hover:bg-pink-600 transition text-white font-semibold px-6 py-3 rounded-full shadow">Cotizar gratis</a>
         </div>
       </article>
+
       <article class="bg-athenec-graylite text-gray-800 rounded-2xl p-8 flex flex-col justify-between shadow-sm hover:shadow-md transition min-h-[380px] relative">
         <div>
-          <span class="uppercase text-xs tracking-widest text-athenec-blue/70">Asesoría académica</span>
-          <h2 class="mt-3 text-2xl font-bold text-athenec-blue leading-snug">Asesoría de tesis e investigación</h2>
-          <p class="mt-4 text-gray-600">Acompañamiento metodológico, análisis estadístico y redacción científica para llevar tu tesis a la sustentación.</p>
+          <span class="uppercase text-xs tracking-widest text-athenec-blue/70">Asesoria academica</span>
+          <h2 class="mt-3 text-2xl font-bold text-athenec-blue leading-snug">Asesoria de tesis e investigacion</h2>
+          <p class="mt-4 text-gray-600">Acompanamiento metodologico, analisis estadistico y redaccion cientifica para llevar tu tesis a la sustentacion.</p>
         </div>
         <div class="mt-8 flex justify-end">
-          <a href="#asesoria" aria-label="Ver más sobre asesoría de tesis" class="w-12 h-12 rounded-full bg-athenec-blue hover:bg-athenec-bluedark transition flex items-center justify-center">
+          <a href="asesoria.html" aria-label="Ver mas sobre asesoria" class="w-12 h-12 rounded-full bg-athenec-blue hover:bg-athenec-bluedark transition flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="white" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
           </a>
         </div>
       </article>
+
       <article class="bg-white border border-gray-200 text-gray-800 rounded-2xl p-8 flex flex-col justify-between shadow-sm hover:shadow-md transition min-h-[380px] relative">
         <div>
-          <span class="uppercase text-xs tracking-widest text-athenec-blue/70">Equipos tecnológicos</span>
+          <span class="uppercase text-xs tracking-widest text-athenec-blue/70">Equipos tecnologicos</span>
           <h2 class="mt-3 text-2xl font-bold text-athenec-blue leading-snug">Venta de equipos y hardware</h2>
-          <p class="mt-4 text-gray-600">Laptops, periféricos, componentes y equipamiento para estudiantes, profesionales y empresas.</p>
+          <p class="mt-4 text-gray-600">Laptops, perifericos, componentes y equipamiento para estudiantes, profesionales y empresas.</p>
         </div>
         <div class="mt-8 flex justify-end">
-          <a href="#equipos" aria-label="Ver catálogo de equipos" class="w-12 h-12 rounded-full bg-athenec-blue hover:bg-athenec-bluedark transition flex items-center justify-center">
+          <a href="equipos.html" aria-label="Ver catalogo de equipos" class="w-12 h-12 rounded-full bg-athenec-blue hover:bg-athenec-bluedark transition flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="white" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
           </a>
         </div>
       </article>
+
     </div>
   </section>
 
-  <!-- ================= SECCIÓN 1: COTIZAR (FORM) ================= -->
-  <section id="cotizar" class="bg-athenec-graylite scroll-mt-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-        <div>
-          <span class="uppercase text-xs tracking-widest text-athenec-magenta font-semibold">Soluciones tecnológicas</span>
-          <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-athenec-blue leading-tight">Cuéntanos tu idea y cotízala gratis.</h2>
-          <p class="mt-5 text-gray-600 text-lg">Diseñamos y desarrollamos software a medida: plataformas web, apps móviles, automatizaciones, integraciones con APIs, dashboards y sistemas empresariales. Envíanos el brief y recibirás una propuesta con alcance, tiempos y precio referencial.</p>
-          <ul class="mt-6 space-y-3 text-gray-700">
-            <li class="flex items-start gap-2"><span class="text-athenec-magenta font-bold">✓</span> Respuesta en menos de 48h hábiles.</li>
-            <li class="flex items-start gap-2"><span class="text-athenec-magenta font-bold">✓</span> Reunión de descubrimiento sin costo.</li>
-            <li class="flex items-start gap-2"><span class="text-athenec-magenta font-bold">✓</span> Contratos por fases con entregables validables.</li>
-          </ul>
-        </div>
-        <form id="cotizarForm" class="bg-white rounded-2xl shadow-lg p-8 space-y-5" novalidate>
-          <div>
-            <label for="nombre_cliente" class="block text-sm font-semibold text-gray-700 mb-1">Nombre completo</label>
-            <input type="text" id="nombre_cliente" name="nombre_cliente" required minlength="2" maxlength="120" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-athenec-blue focus:ring-2 focus:ring-athenec-blue/20 outline-none transition" placeholder="Ej. María Pérez" />
-          </div>
-          <div>
-            <label for="correo" class="block text-sm font-semibold text-gray-700 mb-1">Correo electrónico</label>
-            <input type="email" id="correo" name="correo" required class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-athenec-blue focus:ring-2 focus:ring-athenec-blue/20 outline-none transition" placeholder="tucorreo@ejemplo.com" />
-          </div>
-          <div>
-            <label for="tipo_proyecto" class="block text-sm font-semibold text-gray-700 mb-1">Tipo de proyecto</label>
-            <select id="tipo_proyecto" name="tipo_proyecto" required class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-athenec-blue focus:ring-2 focus:ring-athenec-blue/20 outline-none transition bg-white">
-              <option value="" disabled selected>Selecciona una opción…</option>
-              <option value="web">Aplicación web</option>
-              <option value="movil">Aplicación móvil</option>
-              <option value="automatizacion">Automatización de procesos</option>
-              <option value="integracion">Integración con APIs / sistemas</option>
-              <option value="datos">Datos / dashboards / BI</option>
-              <option value="otro">Otro</option>
-            </select>
-          </div>
-          <div>
-            <label for="descripcion" class="block text-sm font-semibold text-gray-700 mb-1">Descripción del proyecto</label>
-            <textarea id="descripcion" name="descripcion" required minlength="10" maxlength="2000" rows="4" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-athenec-blue focus:ring-2 focus:ring-athenec-blue/20 outline-none transition resize-none" placeholder="Cuéntanos qué necesitas: objetivo, usuarios, funcionalidades clave, plazos aproximados…"></textarea>
-          </div>
-          <button type="submit" id="cotizarSubmit" class="w-full bg-athenec-magenta hover:bg-pink-600 disabled:opacity-60 disabled:cursor-not-allowed transition text-white font-semibold px-6 py-3 rounded-full shadow">Enviar cotización</button>
-          <div id="cotizarFeedback" class="hidden text-sm rounded-lg px-4 py-3"></div>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= SECCIÓN 2: ASESORÍA ================= -->
-  <section id="asesoria" class="bg-white scroll-mt-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <div class="order-2 lg:order-1">
-          <span class="uppercase text-xs tracking-widest text-athenec-magenta font-semibold">Asesoría académica</span>
-          <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-athenec-blue leading-tight">Tu tesis, terminada y sustentada.</h2>
-          <p class="mt-5 text-gray-600 text-lg">Acompañamos a estudiantes de pregrado, maestría y doctorado en todo el proceso investigativo: desde el planteamiento del problema hasta la defensa final.</p>
-          <div class="mt-8 grid sm:grid-cols-2 gap-4">
-            <div class="p-5 rounded-xl bg-athenec-graylite"><h3 class="font-bold text-athenec-blue">Metodología</h3><p class="text-sm text-gray-600 mt-1">Diseño de investigación cuantitativo, cualitativo o mixto.</p></div>
-            <div class="p-5 rounded-xl bg-athenec-graylite"><h3 class="font-bold text-athenec-blue">Estadística</h3><p class="text-sm text-gray-600 mt-1">SPSS, R, Python, STATA. Pruebas paramétricas y no paramétricas.</p></div>
-            <div class="p-5 rounded-xl bg-athenec-graylite"><h3 class="font-bold text-athenec-blue">Redacción</h3><p class="text-sm text-gray-600 mt-1">Normas APA 7, Vancouver, IEEE. Antiplagio con Turnitin.</p></div>
-            <div class="p-5 rounded-xl bg-athenec-graylite"><h3 class="font-bold text-athenec-blue">Sustentación</h3><p class="text-sm text-gray-600 mt-1">Preparación del PPT y ensayo previo con feedback.</p></div>
-          </div>
-          <a href="mailto:contacto@athenec.com?subject=Asesor%C3%ADa%20de%20tesis" class="inline-flex items-center gap-2 mt-8 bg-athenec-blue hover:bg-athenec-bluedark transition text-white font-semibold px-6 py-3 rounded-full shadow">
-            Agendar sesión gratuita
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
-          </a>
-        </div>
-        <div class="order-1 lg:order-2">
-          <div class="aspect-[4/3] rounded-2xl bg-gradient-to-br from-athenec-blue to-athenec-bluedark p-8 shadow-xl flex flex-col justify-between text-white">
-            <div>
-              <div class="text-6xl font-black opacity-30">"</div>
-              <p class="text-xl leading-relaxed -mt-4">Con la asesoría de Athenec terminé mi tesis en 4 meses y la sustenté con calificación sobresaliente.</p>
-            </div>
-            <div>
-              <div class="font-bold">Ana C.</div>
-              <div class="text-sm opacity-80">Maestría en Educación · UNMSM</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= SECCIÓN 3: EQUIPOS ================= -->
-  <section id="equipos" class="bg-athenec-graylite scroll-mt-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-      <div class="text-center max-w-3xl mx-auto">
-        <span class="uppercase text-xs tracking-widest text-athenec-magenta font-semibold">Equipos tecnológicos</span>
-        <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-athenec-blue leading-tight">Hardware confiable al mejor precio.</h2>
-        <p class="mt-5 text-gray-600 text-lg">Trabajamos con distribuidores autorizados para ofrecerte equipos originales, garantía escrita y facturación electrónica.</p>
-      </div>
-      <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-white rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition"><div class="text-4xl">&#128187;</div><h3 class="mt-3 font-bold text-athenec-blue">Laptops</h3><p class="text-sm text-gray-500 mt-1">Dell, HP, Lenovo, ASUS.</p></div>
-        <div class="bg-white rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition"><div class="text-4xl">&#128421;</div><h3 class="mt-3 font-bold text-athenec-blue">PCs escritorio</h3><p class="text-sm text-gray-500 mt-1">Armados a medida.</p></div>
-        <div class="bg-white rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition"><div class="text-4xl">&#127911;</div><h3 class="mt-3 font-bold text-athenec-blue">Periféricos</h3><p class="text-sm text-gray-500 mt-1">Teclados, mouse, audio.</p></div>
-        <div class="bg-white rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition"><div class="text-4xl">&#128268;</div><h3 class="mt-3 font-bold text-athenec-blue">Componentes</h3><p class="text-sm text-gray-500 mt-1">RAM, SSD, GPUs, fuentes.</p></div>
-      </div>
-      <div class="mt-10 flex justify-center">
-        <a href="mailto:ventas@athenec.com?subject=Consulta%20de%20equipos" class="inline-flex items-center gap-2 bg-athenec-blue hover:bg-athenec-bluedark transition text-white font-semibold px-6 py-3 rounded-full shadow">
-          Solicitar catálogo y precios
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= FOOTER ================= -->
-  <footer class="bg-athenec-bluedark text-white mt-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
-        <div class="md:col-span-1">
-          <img src="assets/logo-athenec.jpeg" alt="Athenec" class="h-12 w-auto rounded-md logo-blend" />
-          <p class="mt-3 text-white/70 text-sm leading-relaxed">Tecnología, conocimiento y equipamiento para transformar tus ideas.</p>
-          <a href="mailto:contacto@athenec.com" class="inline-flex items-center gap-1 mt-5 text-white hover:text-athenec-magenta font-medium">
-            Contáctenos
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
-          </a>
-          <div class="flex items-center gap-4 mt-6">
-            <a href="#" aria-label="Facebook" class="hover:text-athenec-magenta transition"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H8v-2.9h2.4V9.8c0-2.4 1.4-3.7 3.6-3.7 1 0 2.1.2 2.1.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.5v1.9h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12Z"/></svg></a>
-            <a href="#" aria-label="X" class="hover:text-athenec-magenta transition"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5"><path d="M18.2 2H21l-6.6 7.5L22 22h-6.8l-4.8-6.2L4.7 22H2l7-8L2 2h6.9l4.4 5.8L18.2 2Zm-1.2 18h1.9L7.1 4H5.1L17 20Z"/></svg></a>
-            <a href="#" aria-label="LinkedIn" class="hover:text-athenec-magenta transition"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5"><path d="M4.98 3.5A2.5 2.5 0 1 1 5 8.5a2.5 2.5 0 0 1-.02-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.05c.53-1 1.83-2.06 3.77-2.06 4.03 0 4.78 2.65 4.78 6.1V21H18v-5.3c0-1.27-.02-2.9-1.77-2.9-1.77 0-2.04 1.38-2.04 2.8V21H10V9Z"/></svg></a>
-            <a href="#" aria-label="YouTube" class="hover:text-athenec-magenta transition"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5"><path d="M23.5 7.2s-.2-1.6-.9-2.3c-.9-.9-1.9-.9-2.4-1C16.9 3.5 12 3.5 12 3.5s-4.9 0-8.2.4c-.5.1-1.5.1-2.4 1-.7.7-.9 2.3-.9 2.3S0 9 0 10.9v1.9c0 1.8.2 3.7.2 3.7s.2 1.6.9 2.3c.9.9 2.1.9 2.6 1 1.9.2 8.3.3 8.3.3s4.9 0 8.2-.4c.5-.1 1.5-.1 2.4-1 .7-.7.9-2.3.9-2.3s.2-1.8.2-3.7v-1.9c0-1.8-.2-3.6-.2-3.6ZM9.5 15V8.8L15.8 12 9.5 15Z"/></svg></a>
-          </div>
-        </div>
-        <div>
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-white/80">Compañía</h3>
-          <ul class="mt-4 space-y-2 text-white/70 text-sm">
-            <li><a href="#" class="hover:text-white">Acerca de nosotros</a></li>
-            <li><a href="#" class="hover:text-white">Prensa</a></li>
-            <li><a href="#" class="hover:text-white">Trabaja con nosotros</a></li>
-            <li><a href="#" class="hover:text-white">Sostenibilidad</a></li>
-            <li><a href="#" class="hover:text-white">Certificación</a></li>
-          </ul>
-        </div>
-        <div>
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-white/80">Comunidades</h3>
-          <ul class="mt-4 space-y-2 text-white/70 text-sm">
-            <li><a href="#software" class="hover:text-white">Desarrolladores</a></li>
-            <li><a href="#asesoria" class="hover:text-white">Estudiantes</a></li>
-            <li><a href="#asesoria" class="hover:text-white">Investigadores</a></li>
-            <li><a href="#" class="hover:text-white">Socios</a></li>
-            <li><a href="#" class="hover:text-white">Eventos</a></li>
-          </ul>
-        </div>
-        <div>
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-white/80">Recursos</h3>
-          <ul class="mt-4 space-y-2 text-white/70 text-sm">
-            <li><a href="#" class="hover:text-white">Accesibilidad</a></li>
-            <li><a href="#" class="hover:text-white">Soporte técnico</a></li>
-            <li><a href="#" class="hover:text-white">Documentación</a></li>
-            <li><a href="#" class="hover:text-white">Términos de uso</a></li>
-            <li><a href="#" class="hover:text-white">Política de privacidad</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="border-t border-white/10 mt-10 pt-6 flex flex-col md:flex-row justify-between gap-2 text-xs text-white/60">
-        <p>&copy; 2026 Athenec. Todos los derechos reservados.</p>
-        <p>Hecho con &#10084; en Latinoamérica.</p>
-      </div>
-    </div>
-  </footer>
-
-  <script>
-    const API_BASE = 'http://localhost:8000/api';
-
-    const btn = document.getElementById('mobileMenuBtn');
-    const nav = document.getElementById('mobileNav');
-    btn?.addEventListener('click', () => { nav.classList.toggle('hidden'); nav.classList.toggle('flex'); });
-
-    const form = document.getElementById('cotizarForm');
-    const submitBtn = document.getElementById('cotizarSubmit');
-    const feedback = document.getElementById('cotizarFeedback');
-
-    function showFeedback(kind, message) {
-      feedback.className = 'text-sm rounded-lg px-4 py-3 ' + (
-        kind === 'success' ? 'bg-green-50 text-green-800 border border-green-200'
-        : kind === 'error' ? 'bg-red-50 text-red-800 border border-red-200'
-        : 'bg-blue-50 text-blue-800 border border-blue-200'
-      );
-      feedback.textContent = message;
-      feedback.classList.remove('hidden');
-    }
-
-    form?.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      feedback.classList.add('hidden');
-      if (!form.checkValidity()) { form.reportValidity(); return; }
-
-      const payload = {
-        nombre_cliente: form.nombre_cliente.value.trim(),
-        correo: form.correo.value.trim(),
-        tipo_proyecto: form.tipo_proyecto.value,
-        descripcion: form.descripcion.value.trim(),
-      };
-
-      submitBtn.disabled = true;
-      const originalLabel = submitBtn.textContent;
-      submitBtn.textContent = 'Enviando…';
-
-      try {
-        const res = await fetch(`${API_BASE}/soluciones/cotizar`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-
-        if (res.status === 201) {
-          const data = await res.json();
-          const firstName = payload.nombre_cliente.split(' ')[0];
-          showFeedback('success', `¡Listo, ${firstName}! Recibimos tu cotización (ticket ${data.ticket_id}). Te contactaremos pronto a ${payload.correo}.`);
-          form.reset();
-        } else if (res.status === 422) {
-          const err = await res.json();
-          const firstMsg = err?.detail?.[0]?.msg || 'Revisa los datos ingresados.';
-          showFeedback('error', `Datos inválidos: ${firstMsg}`);
-        } else {
-          showFeedback('error', `El servidor respondió con estado ${res.status}. Intenta nuevamente en unos minutos.`);
-        }
-      } catch (err) {
-        showFeedback('error', 'No se pudo conectar con el servidor. Verifica que el backend esté corriendo en http://localhost:8000.');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalLabel;
-      }
-    });
-  </script>
+  <div id="footer-slot"></div>
+  <script src="js/partials.js"></script>
 </body>
 </html>
