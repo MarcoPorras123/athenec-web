@@ -19,13 +19,37 @@
 <body class="font-sans bg-athenec-graylite text-gray-800" data-page="admin">
   <div id="header-slot"></div>
 
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <!-- ============ LOGIN MODAL ============ -->
+  <div id="loginOverlay" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center px-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
+      <div class="text-center">
+        <div class="mx-auto w-14 h-14 rounded-full bg-athenec-magenta text-white flex items-center justify-center text-2xl">&#128274;</div>
+        <h2 class="mt-4 text-2xl font-extrabold text-athenec-blue">Panel comercial</h2>
+        <p class="text-gray-600 mt-2 text-sm">Ingresa tu token de acceso.</p>
+      </div>
+      <form id="loginForm" class="mt-6 space-y-4">
+        <input type="password" id="tokenInput" required autocomplete="off"
+               placeholder="Bearer token"
+               class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-athenec-blue focus:ring-2 focus:ring-athenec-blue/20 outline-none transition" />
+        <button type="submit" class="w-full bg-athenec-magenta hover:bg-pink-600 transition text-white font-semibold px-6 py-3 rounded-full shadow">
+          Entrar
+        </button>
+        <div id="loginError" class="hidden text-sm text-red-600 text-center"></div>
+      </form>
+      <p class="mt-6 text-xs text-gray-400 text-center">
+        Configura <code class="bg-athenec-graylite px-1 rounded">ADMIN_TOKEN</code> en el <code class="bg-athenec-graylite px-1 rounded">.env</code> del backend.
+      </p>
+    </div>
+  </div>
+
+  <!-- ============ CONTENIDO ============ -->
+  <section id="panelContent" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
     <div class="flex items-center justify-between flex-wrap gap-4">
       <div>
         <h1 class="text-3xl font-extrabold text-athenec-blue">Panel comercial</h1>
         <p class="text-gray-600 mt-1">Gestion unificada de solicitudes entrantes.</p>
       </div>
-      <div class="flex gap-2 items-center">
+      <div class="flex gap-2 items-center flex-wrap">
         <label for="tabla" class="text-sm font-semibold text-gray-700">Tabla:</label>
         <select id="tabla" class="rounded-lg border border-gray-300 px-3 py-2 bg-white text-sm">
           <option value="cotizaciones">Soluciones (COT-)</option>
@@ -36,13 +60,12 @@
         <select id="filtroStatus" class="rounded-lg border border-gray-300 px-3 py-2 bg-white text-sm">
           <option value="">Todos</option>
         </select>
-        <button id="btnRefresh" class="bg-athenec-blue hover:bg-athenec-bluedark text-white px-4 py-2 rounded-lg text-sm font-semibold ml-3">
-          Refrescar
-        </button>
+        <button id="btnRefresh" class="bg-athenec-blue hover:bg-athenec-bluedark text-white px-4 py-2 rounded-lg text-sm font-semibold ml-3">Refrescar</button>
+        <button id="btnExport" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold">Descargar CSV</button>
+        <button id="btnLogout" class="border border-gray-300 text-gray-700 hover:bg-white px-4 py-2 rounded-lg text-sm font-semibold">Salir</button>
       </div>
     </div>
 
-    <!-- Metricas -->
     <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
       <div class="bg-white rounded-2xl p-5 shadow-sm">
         <div class="text-xs uppercase tracking-widest text-gray-500">Total</div>
@@ -62,7 +85,6 @@
       </div>
     </div>
 
-    <!-- Tabla -->
     <div class="mt-8 bg-white rounded-2xl shadow-sm overflow-hidden">
       <div class="overflow-x-auto">
         <table class="min-w-full text-sm">
@@ -90,23 +112,27 @@
   <script src="js/partials.js"></script>
   <script>
     const API = 'http://localhost:8000/api';
+    const TOKEN_KEY = 'athenec_admin_token';
 
     const CONFIG = {
       cotizaciones: {
         listUrl: API + '/soluciones/cotizaciones',
+        exportUrl: API + '/soluciones/cotizaciones/export',
         patchUrl: (t) => API + '/soluciones/cotizaciones/' + t,
         typeField: 'tipo_proyecto',
         statuses: ['nueva','contactada','cotizada','ganada','perdida'],
       },
       asesorias: {
         listUrl: API + '/asesoria/solicitudes',
-        patchUrl: (t) => API + '/asesoria/solicitudes/' + t,   // placeholder - PATCH no implementado aun para asesorias
+        exportUrl: API + '/asesoria/solicitudes/export',
+        patchUrl: (t) => API + '/asesoria/solicitudes/' + t,
         typeField: 'nivel',
         statuses: ['nueva','contactada','en_asesoria','finalizada','perdida'],
       },
       equipos: {
         listUrl: API + '/equipos/consultas',
-        patchUrl: (t) => API + '/equipos/consultas/' + t,      // placeholder - PATCH no implementado aun
+        exportUrl: API + '/equipos/consultas/export',
+        patchUrl: (t) => API + '/equipos/consultas/' + t,
         typeField: 'categoria',
         statuses: ['nueva','cotizada','facturada','entregada','perdida'],
       }
@@ -136,10 +162,77 @@
       setTimeout(() => feedback.classList.add('hidden'), 4000);
     }
 
+    // ---- Auth ----
+    function getToken()   { return sessionStorage.getItem(TOKEN_KEY) || ''; }
+    function setToken(t)  { sessionStorage.setItem(TOKEN_KEY, t); }
+    function clearToken() { sessionStorage.removeItem(TOKEN_KEY); }
+
+    function authHeaders() {
+      return { 'Authorization': 'Bearer ' + getToken() };
+    }
+
+    async function apiFetch(url, opts = {}) {
+      opts.headers = Object.assign({}, opts.headers || {}, authHeaders());
+      const res = await fetch(url, opts);
+      if (res.status === 401) {
+        clearToken();
+        showLogin('Token invalido o expirado. Ingresa nuevamente.');
+        throw new Error('401');
+      }
+      return res;
+    }
+
+    function showLogin(errMsg) {
+      el('panelContent').classList.add('hidden');
+      el('loginOverlay').classList.remove('hidden');
+      if (errMsg) {
+        el('loginError').textContent = errMsg;
+        el('loginError').classList.remove('hidden');
+      } else {
+        el('loginError').classList.add('hidden');
+      }
+      setTimeout(() => el('tokenInput').focus(), 100);
+    }
+    function showPanel() {
+      el('loginOverlay').classList.add('hidden');
+      el('panelContent').classList.remove('hidden');
+    }
+
+    el('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const t = el('tokenInput').value.trim();
+      if (!t) return;
+      setToken(t);
+      // Prueba de validez con un GET
+      try {
+        const res = await fetch(CONFIG.cotizaciones.listUrl + '?limit=1', {
+          headers: { 'Authorization': 'Bearer ' + t }
+        });
+        if (res.status === 401) {
+          clearToken();
+          el('loginError').textContent = 'Token invalido.';
+          el('loginError').classList.remove('hidden');
+          return;
+        }
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        showPanel();
+        llenarFiltroStatus();
+        cargar();
+      } catch (err) {
+        el('loginError').textContent = 'No se pudo conectar. Backend en http://localhost:8000?';
+        el('loginError').classList.remove('hidden');
+      }
+    });
+
+    el('btnLogout').addEventListener('click', () => {
+      clearToken();
+      showLogin();
+    });
+
+    // ---- Data ops ----
     function llenarFiltroStatus() {
       const cfg = CONFIG[el('tabla').value];
-      const sel = el('filtroStatus');
-      sel.innerHTML = '<option value="">Todos</option>' +
+      el('filtroStatus').innerHTML = '<option value="">Todos</option>' +
         cfg.statuses.map(s => `<option value="${s}">${s}</option>`).join('');
     }
 
@@ -151,17 +244,18 @@
       const tbody = el('tbody');
       tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-gray-500">Cargando...</td></tr>';
       try {
-        const res = await fetch(url);
+        const res = await apiFetch(url);
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const rows = await res.json();
         renderTabla(rows, tabla);
-        renderMetricas(rows, tabla);
+        renderMetricas(rows);
       } catch (e) {
+        if (e.message === '401') return;
         tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-red-600">Error: ${e.message}. Backend en http://localhost:8000?</td></tr>`;
       }
     }
 
-    function renderMetricas(rows, tabla) {
+    function renderMetricas(rows) {
       el('mTotal').textContent = rows.length;
       el('mNuevas').textContent = rows.filter(r => r.status === 'nueva').length;
       const proceso = ['contactada','cotizada','en_asesoria','facturada'];
@@ -179,50 +273,67 @@
       }
       tbody.innerHTML = rows.map(r => `
         <tr class="border-t border-gray-100 hover:bg-athenec-graylite/50">
-          <td class="px-4 py-3 font-mono text-xs">${r.ticket_id}</td>
+          <td class="px-4 py-3 font-mono text-xs">${escapeHtml(r.ticket_id)}</td>
           <td class="px-4 py-3 font-medium">${escapeHtml(r.nombre_cliente)}</td>
           <td class="px-4 py-3 text-gray-600">${escapeHtml(r.correo)}</td>
           <td class="px-4 py-3">${escapeHtml(r[cfg.typeField] || '-')}</td>
           <td class="px-4 py-3">
-            ${tabla === 'cotizaciones' ? `
-              <select data-ticket="${r.ticket_id}" data-current="${r.status}"
-                      class="statusSelect rounded-md text-xs font-semibold px-2 py-1 ${STATUS_STYLE[r.status] || ''}">
-                ${cfg.statuses.map(s => `<option value="${s}" ${s === r.status ? 'selected' : ''}>${s}</option>`).join('')}
-              </select>
-            ` : `
-              <span class="rounded-md text-xs font-semibold px-2 py-1 ${STATUS_STYLE[r.status] || 'bg-gray-100 text-gray-700'}">${r.status}</span>
-            `}
+            <select data-ticket="${escapeHtml(r.ticket_id)}" data-current="${escapeHtml(r.status)}"
+                    class="statusSelect rounded-md text-xs font-semibold px-2 py-1 ${STATUS_STYLE[r.status] || ''}">
+              ${cfg.statuses.map(s => `<option value="${s}" ${s === r.status ? 'selected' : ''}>${s}</option>`).join('')}
+            </select>
           </td>
           <td class="px-4 py-3 text-gray-500 text-xs">${new Date(r.created_at).toLocaleString()}</td>
         </tr>
       `).join('');
 
-      // Wire up status change (solo cotizaciones tiene PATCH)
-      if (tabla === 'cotizaciones') {
-        tbody.querySelectorAll('.statusSelect').forEach(sel => {
-          sel.addEventListener('change', async (ev) => {
-            const ticket = ev.target.dataset.ticket;
-            const newStatus = ev.target.value;
-            const previous = ev.target.dataset.current;
-            try {
-              const res = await fetch(CONFIG.cotizaciones.patchUrl(ticket), {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status: newStatus }),
-              });
-              if (!res.ok) throw new Error('HTTP ' + res.status);
-              showFeedback('success', `${ticket} -> ${newStatus}`);
-              ev.target.dataset.current = newStatus;
-              ev.target.className = 'statusSelect rounded-md text-xs font-semibold px-2 py-1 ' + (STATUS_STYLE[newStatus] || '');
-              renderMetricas(await (await fetch(CONFIG.cotizaciones.listUrl)).json(), 'cotizaciones');
-            } catch (e) {
-              showFeedback('error', 'No se pudo actualizar: ' + e.message);
-              ev.target.value = previous;
-            }
-          });
+      tbody.querySelectorAll('.statusSelect').forEach(sel => {
+        sel.addEventListener('change', async (ev) => {
+          const ticket = ev.target.dataset.ticket;
+          const newStatus = ev.target.value;
+          const previous = ev.target.dataset.current;
+          try {
+            const res = await apiFetch(cfg.patchUrl(ticket), {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ status: newStatus }),
+            });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            showFeedback('success', `${ticket} -> ${newStatus}`);
+            ev.target.dataset.current = newStatus;
+            ev.target.className = 'statusSelect rounded-md text-xs font-semibold px-2 py-1 ' + (STATUS_STYLE[newStatus] || '');
+            cargar();
+          } catch (e) {
+            if (e.message === '401') return;
+            showFeedback('error', 'No se pudo actualizar: ' + e.message);
+            ev.target.value = previous;
+          }
         });
-      }
+      });
     }
+
+    // ---- Export CSV ----
+    el('btnExport').addEventListener('click', async () => {
+      const cfg = CONFIG[el('tabla').value];
+      try {
+        const res = await apiFetch(cfg.exportUrl);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        // filename por defecto del header, o inferido
+        const cd = res.headers.get('Content-Disposition') || '';
+        const m = cd.match(/filename="([^"]+)"/);
+        a.download = m ? m[1] : (el('tabla').value + '.csv');
+        document.body.appendChild(a); a.click(); a.remove();
+        URL.revokeObjectURL(url);
+        showFeedback('success', 'CSV descargado.');
+      } catch (e) {
+        if (e.message === '401') return;
+        showFeedback('error', 'No se pudo exportar: ' + e.message);
+      }
+    });
 
     function escapeHtml(s) {
       return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -232,8 +343,21 @@
     el('filtroStatus').addEventListener('change', cargar);
     el('btnRefresh').addEventListener('click', cargar);
 
-    llenarFiltroStatus();
-    cargar();
+    // Bootstrap: si hay token, prueba silenciosamente; si no, muestra login.
+    (async function boot() {
+      if (getToken()) {
+        try {
+          const res = await fetch(CONFIG.cotizaciones.listUrl + '?limit=1', { headers: authHeaders() });
+          if (res.status === 401) { clearToken(); showLogin(); return; }
+          if (!res.ok) throw new Error();
+          showPanel();
+          llenarFiltroStatus();
+          cargar();
+        } catch { showLogin(); }
+      } else {
+        showLogin();
+      }
+    })();
   </script>
 </body>
 </html>

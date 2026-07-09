@@ -1,39 +1,33 @@
-"""Router: Consulta de equipos tecnologicos."""
+"""Router: Consulta de equipos (con auth)."""
+import csv, io
 from datetime import datetime
 from enum import Enum
 from typing import Literal, List, Optional
 
 from fastapi import APIRouter, status, Depends, HTTPException, Query, BackgroundTasks
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from sqlalchemy.orm import Session
 
 from database import get_db
 from models import ConsultaEquipo
 from email_service import notificar_nueva_cotizacion
+from auth import verify_admin_token
 
 router = APIRouter(prefix="/equipos", tags=["equipos"])
 
 
 class CategoriaEquipo(str, Enum):
-    LAPTOP = "laptop"
-    PC = "pc"
-    PERIFERICO = "periferico"
-    COMPONENTE = "componente"
+    LAPTOP = "laptop"; PC = "pc"; PERIFERICO = "periferico"; COMPONENTE = "componente"
 
 
 class Presupuesto(str, Enum):
-    BAJO = "0-1500"
-    MEDIO = "1500-3000"
-    ALTO = "3000-6000"
-    PREMIUM = "6000+"
+    BAJO = "0-1500"; MEDIO = "1500-3000"; ALTO = "3000-6000"; PREMIUM = "6000+"
 
 
 class StatusConsulta(str, Enum):
-    NUEVA = "nueva"
-    COTIZADA = "cotizada"
-    FACTURADA = "facturada"
-    ENTREGADA = "entregada"
-    PERDIDA = "perdida"
+    NUEVA = "nueva"; COTIZADA = "cotizada"; FACTURADA = "facturada"
+    ENTREGADA = "entregada"; PERDIDA = "perdida"
 
 
 class ConsultaRequest(BaseModel):
@@ -45,23 +39,19 @@ class ConsultaRequest(BaseModel):
 
 
 class ConsultaOut(BaseModel):
-    id: int
-    ticket_id: str
-    nombre_cliente: str
-    correo: EmailStr
-    categoria: CategoriaEquipo
-    presupuesto: Optional[Presupuesto] = None
-    detalle: str
-    status: StatusConsulta
-    created_at: datetime
+    id: int; ticket_id: str; nombre_cliente: str; correo: EmailStr
+    categoria: CategoriaEquipo; presupuesto: Optional[Presupuesto] = None
+    detalle: str; status: StatusConsulta; created_at: datetime
     model_config = ConfigDict(from_attributes=True)
 
 
 class ConsultaResponse(BaseModel):
     success: Literal[True] = True
-    message: str
-    ticket_id: str
-    data: ConsultaOut
+    message: str; ticket_id: str; data: ConsultaOut
+
+
+class StatusUpdateRequest(BaseModel):
+    status: StatusConsulta
 
 
 def _ticket() -> str:
@@ -69,47 +59,39 @@ def _ticket() -> str:
     return "EQP-" + now.strftime("%Y%m%d-%H%M%S") + "-" + f"{now.microsecond // 1000:03d}"
 
 
+# ---- PUBLICO ----
 @router.post("/consultar", response_model=ConsultaResponse, status_code=status.HTTP_201_CREATED,
-             summary="Solicitar cotizacion de equipos")
-def consultar_equipos(payload: ConsultaRequest,
-                      background_tasks: BackgroundTasks,
-                      db: Session = Depends(get_db)) -> ConsultaResponse:
-    ticket_id = _ticket()
+             summary="Solicitar cotizacion de equipos (publico)")
+def consultar(payload: ConsultaRequest,
+              background_tasks: BackgroundTasks,
+              db: Session = Depends(get_db)) -> ConsultaResponse:
+    tid = _ticket()
     row = ConsultaEquipo(
-        ticket_id=ticket_id,
-        nombre_cliente=payload.nombre_cliente,
-        correo=payload.correo,
+        ticket_id=tid, nombre_cliente=payload.nombre_cliente, correo=payload.correo,
         categoria=payload.categoria.value,
         presupuesto=payload.presupuesto.value if payload.presupuesto else None,
-        detalle=payload.detalle,
-        status=StatusConsulta.NUEVA.value,
+        detalle=payload.detalle, status=StatusConsulta.NUEVA.value,
     )
     db.add(row); db.commit(); db.refresh(row)
-
     background_tasks.add_task(
-        notificar_nueva_cotizacion,
-        tipo="equipos",
-        ticket_id=ticket_id,
-        nombre_cliente=payload.nombre_cliente,
-        correo=payload.correo,
+        notificar_nueva_cotizacion, tipo="equipos", ticket_id=tid,
+        nombre_cliente=payload.nombre_cliente, correo=payload.correo,
         detalle=(f"Categoria: {payload.categoria.value}\n"
                  f"Presupuesto: {payload.presupuesto.value if payload.presupuesto else 'no indicado'}\n\n"
                  f"{payload.detalle}"),
     )
-
     return ConsultaResponse(
         message="Consulta recibida. Te enviaremos opciones a tu correo.",
-        ticket_id=ticket_id,
-        data=ConsultaOut.model_validate(row),
+        ticket_id=tid, data=ConsultaOut.model_validate(row),
     )
 
 
+# ---- PROTEGIDO ----
 @router.get("/consultas", response_model=List[ConsultaOut],
-            summary="Listar consultas de equipos")
+            summary="Listar consultas (auth)", dependencies=[Depends(verify_admin_token)])
 def listar(db: Session = Depends(get_db),
            status_filter: Optional[StatusConsulta] = Query(None, alias="status"),
-           limit: int = Query(50, ge=1, le=500),
-           offset: int = Query(0, ge=0)) -> List[ConsultaOut]:
+           limit: int = Query(50, ge=1, le=500), offset: int = Query(0, ge=0)) -> List[ConsultaOut]:
     q = db.query(ConsultaEquipo)
     if status_filter is not None:
         q = q.filter(ConsultaEquipo.status == status_filter.value)
@@ -117,10 +99,37 @@ def listar(db: Session = Depends(get_db),
     return [ConsultaOut.model_validate(r) for r in rows]
 
 
+@router.get("/consultas/export", summary="Exportar CSV (auth)",
+            dependencies=[Depends(verify_admin_token)])
+def exportar(db: Session = Depends(get_db)) -> StreamingResponse:
+    rows = db.query(ConsultaEquipo).order_by(ConsultaEquipo.created_at.desc()).all()
+    buf = io.StringIO(); w = csv.writer(buf)
+    w.writerow(["id","ticket_id","nombre_cliente","correo","categoria","presupuesto","detalle","status","created_at"])
+    for r in rows:
+        w.writerow([r.id, r.ticket_id, r.nombre_cliente, r.correo, r.categoria,
+                    r.presupuesto or "", r.detalle, r.status, r.created_at.isoformat()])
+    buf.seek(0)
+    fname = f"equipos_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"
+    return StreamingResponse(iter([buf.getvalue()]), media_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{fname}"'})
+
+
 @router.get("/consultas/{ticket_id}", response_model=ConsultaOut,
-            summary="Detalle de consulta")
+            summary="Detalle (auth)", dependencies=[Depends(verify_admin_token)])
 def detalle(ticket_id: str, db: Session = Depends(get_db)) -> ConsultaOut:
     row = db.query(ConsultaEquipo).filter(ConsultaEquipo.ticket_id == ticket_id).first()
     if not row:
         raise HTTPException(status_code=404, detail="No encontrada.")
+    return ConsultaOut.model_validate(row)
+
+
+@router.patch("/consultas/{ticket_id}", response_model=ConsultaOut,
+              summary="Actualizar status (auth)", dependencies=[Depends(verify_admin_token)])
+def patch_status(ticket_id: str, payload: StatusUpdateRequest,
+                 db: Session = Depends(get_db)) -> ConsultaOut:
+    row = db.query(ConsultaEquipo).filter(ConsultaEquipo.ticket_id == ticket_id).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="No encontrada.")
+    row.status = payload.status.value
+    db.commit(); db.refresh(row)
     return ConsultaOut.model_validate(row)
