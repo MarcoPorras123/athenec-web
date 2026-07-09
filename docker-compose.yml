@@ -1,0 +1,54 @@
+# ============================================================
+# Athenec - Docker Compose (dev y produccion local)
+#
+# Uso:
+#   docker compose up -d --build
+#   -> frontend  http://localhost/
+#   -> backend   http://localhost:8000/docs
+#   docker compose logs -f backend
+#   docker compose down
+# ============================================================
+
+services:
+
+  backend:
+    build:
+      context: ./backend
+    container_name: athenec-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      ENVIRONMENT: production
+      DATABASE_URL: sqlite:////app/data/athenec.db
+      FRONTEND_ORIGIN: http://localhost,http://localhost:80,http://localhost:5173,http://localhost:3000
+      ADMIN_TOKEN: ${ADMIN_TOKEN:-cambia-este-token-en-produccion}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      CONTACT_EMAIL: ${CONTACT_EMAIL:-contacto@athenec.com}
+    volumes:
+      - athenec_data:/app/data
+    networks:
+      - athenec_net
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: athenec-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - athenec_net
+
+volumes:
+  athenec_data:
+    driver: local
+
+networks:
+  athenec_net:
+    driver: bridge

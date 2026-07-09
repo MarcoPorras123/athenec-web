@@ -219,6 +219,47 @@ Ver `.env.example` en la raíz del proyecto. Variables clave:
 
 ---
 
+---
+
+## Docker (produccion local con un solo comando)
+
+Requisito: [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+
+```bash
+cp .env.example .env
+# Edita ADMIN_TOKEN y (opcional) SMTP_* en .env
+docker compose up -d --build
+```
+
+Servicios expuestos:
+
+- Frontend: `http://localhost/`
+- Backend: `http://localhost:8000/docs`
+- Admin: `http://localhost/admin.html`
+
+Comandos utiles:
+
+```bash
+docker compose logs -f backend        # ver logs en vivo
+docker compose exec backend sh        # abrir shell en el contenedor
+docker compose down                   # apagar
+docker compose down -v                # apagar y borrar volumen (DB)
+```
+
+La base SQLite se persiste en el volumen nombrado `athenec_data`.
+
+---
+
+## Despliegue a produccion (AWS)
+
+Ver [`DEPLOY.md`](./DEPLOY.md) para guias paso a paso de:
+
+- **AWS App Runner** (mas simple, ~15 min, recomendado para MVP)
+- **AWS ECS Fargate + ALB** (control fino, produccion seria)
+- **EC2 + docker compose** (barato, requiere administracion)
+
+Incluye checklist pre-produccion, migracion a PostgreSQL (RDS) y estimados de costo.
+
 ## Licencia
 
 Propietario. © Athenec. Todos los derechos reservados.
