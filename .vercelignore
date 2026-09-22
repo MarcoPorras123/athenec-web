@@ -1,0 +1,10 @@
+backend/
+.env
+*.db
+*.sqlite3
+__pycache__/
+*.pyc
+venv/
+.venv/
+docker-compose.yml
+DEPLOY.md
